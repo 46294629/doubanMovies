@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from mysql import MySQLdb
+from db.mysql import MySQLdb
 from get_movies import file_path,get_movie
 import chardet
 import sys
