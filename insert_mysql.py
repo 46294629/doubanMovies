@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from db.mysql import MySQLdb
-from get_movies import file_path,get_movie
-import chardet
-import sys
 import json
+import sys
+
+from db.mysql import MySQLdb
+from get_movies import file_path, get_movie
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -42,6 +43,10 @@ def handle_records():
             directors, actors, types, area, ReleaseTime = get_movie(url, ChineseName)
             if area:
                 ReleaseTime = checkFormat(ReleaseTime)
+                id = query_movie(ChineseName, OtherName, area, ReleaseTime)
+                if id != -1:
+                    print "movie has been inserted.continue"
+                    continue
                 insert_movie(ChineseName, OtherName,area, ReleaseTime)
                 id = query_movie(ChineseName, OtherName,area, ReleaseTime)
                 if id != -1:
@@ -64,7 +69,7 @@ def handle_records():
     if failed_record_map:
         #如果想要显示为中文而非ascii，dumps时应该指明：json.dumps(python_str,ensure_ascii=False)
         #如果开头没有指明编码，打开文件时应该指明：with open("failed_records.json",'a',encoding='utf-8') as w:
-        with open("failed_records.json",'a') as w:
+        with open("failed_records.json",'w') as w:
             w.write("\n"+json.dumps(failed_record_map))
 
 def insert_movie(ChineseName,OtherName,area,ReleaseTime):
@@ -75,7 +80,7 @@ def insert_movie(ChineseName,OtherName,area,ReleaseTime):
             db.execute(sql)
             return True
         except Exception as e:
-            print "error:%s" %str(e)
+            print "insert movie error:%s" %str(e)
             db = mysql(True,**MovieDB)
     return False
 
@@ -85,9 +90,9 @@ def query_movie(ChineseName, OtherName, area, ReleaseTime):
     for _ in range(3):
         try:
             res = db.query(sql)
-            return res[0]['id']
+            return res[0]['id'] if res else -1
         except Exception as e:
-            print "error:%s" %str(e)
+            print "query error:%s" %str(e)
             db = mysql(True,**MovieDB)
     return -1
 
@@ -99,7 +104,7 @@ def insert_director(director,id):
             db.execute(sql)
             return True
         except Exception as e:
-            print "error:%s" % str(e)
+            print "insert director error:%s" % str(e)
             db = mysql(True, **MovieDB)
     return False
 
@@ -111,7 +116,7 @@ def insert_actor(actor,id):
             db.execute(sql)
             return True
         except Exception as e:
-            print "error:%s" % str(e)
+            print "insert actor error:%s" % str(e)
             db = mysql(True, **MovieDB)
     return False
 
@@ -123,7 +128,7 @@ def insert_type(type,id):
             db.execute(sql)
             return True
         except Exception as e:
-            print "error:%s" % str(e)
+            print "insert type error:%s" % str(e)
             db = mysql(True, **MovieDB)
     return False
 
