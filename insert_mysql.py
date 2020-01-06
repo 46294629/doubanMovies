@@ -27,18 +27,40 @@ def checkFormat(ReleaseTime):
     else:
         return ReleaseTime + "-01-01"
 
-def handle_records():
-    with open(file_path, 'r') as f:
-        datas = f.readlines()
+def get_line(file):
+    with open(file,'r') as r:
+        for data in r.readlines():
+            yield data
+
+def add_date_and_mark():
     failed_record_map = {}
-    for data in datas:
-        if data == "name;intro;url\n":
+    for data in get_line(file_path):
+        if data == "name;intro;url;date;mark\n":
+            continue
+        infos = data.rstrip('\n').split(';')
+        date = infos[-2]
+        mark = int(infos[-1])
+        ChineseName = infos[0].split('/')[0].strip()
+        OtherName = infos[0].split('/')[-1].strip()
+        if not change_mark_and_date(ChineseName,OtherName,date,mark):
+            failed_record_map[ChineseName] = OtherName
+    if failed_record_map:
+        with open("failed_records.json",'w') as w:
+            w.write(json.dumps(failed_record_map))
+
+
+
+def handle_records():
+    failed_record_map = {}
+    for data in get_line(file_path):
+        if data == "name;intro;url;date;mark\n":
             continue
         infos = data.rstrip('\n').split(';')
         ChineseName = infos[0].split('/')[0].strip()
-
         OtherName = infos[0].split('/')[-1].strip()
-        url = infos[-1]
+        mark = infos[-1]
+        date = infos[-2]
+        url = infos[-3]
         try:
             directors, actors, types, area, ReleaseTime = get_movie(url, ChineseName)
             if area:
@@ -47,7 +69,7 @@ def handle_records():
                 if id != -1:
                     print "movie has been inserted.continue"
                     continue
-                insert_movie(ChineseName, OtherName,area, ReleaseTime)
+                insert_movie(ChineseName, OtherName,area, ReleaseTime, date, mark)
                 id = query_movie(ChineseName, OtherName,area, ReleaseTime)
                 if id != -1:
                     for director in directors:
@@ -70,17 +92,28 @@ def handle_records():
         #如果想要显示为中文而非ascii，dumps时应该指明：json.dumps(python_str,ensure_ascii=False)
         #如果开头没有指明编码，打开文件时应该指明：with open("failed_records.json",'a',encoding='utf-8') as w:
         with open("failed_records.json",'w') as w:
-            w.write("\n"+json.dumps(failed_record_map))
+            w.write(json.dumps(failed_record_map))
 
-def insert_movie(ChineseName,OtherName,area,ReleaseTime):
+def change_mark_and_date(ChineseName,OtherName,RecordDate,Mark):
     db = mysql(**MovieDB)
-    sql = 'insert into Movies (ChineseName, OtherName,area, ReleaseTime) values ("%s","%s","%s","%s");' %(ChineseName,OtherName,area,ReleaseTime)
+    sql = 'update movies set RecordDate="%s", Mark=%f where ChineseName="%s" and OtherName="%s"' % (
+        RecordDate, Mark, ChineseName, OtherName)
+    try:
+        db.execute(sql)
+    except Exception as e:
+        print "change mark and date of movie %s error:%s"%(ChineseName,str(e))
+        return False
+    return True
+
+def insert_movie(ChineseName,OtherName,area,ReleaseTime,RecordDate,Mark):
+    db = mysql(**MovieDB)
+    sql = 'insert into Movies (ChineseName, OtherName,area, ReleaseTime, RecordDate, Mark) values ("%s","%s","%s","%s","%s",%f);' %(ChineseName,OtherName,area,ReleaseTime,RecordDate,Mark)
     for _ in range(3):
         try:
             db.execute(sql)
             return True
         except Exception as e:
-            print "insert movie error:%s" %str(e)
+            print "insert movie %s error:%s" %(ChineseName,str(e))
             db = mysql(True,**MovieDB)
     return False
 
@@ -133,7 +166,8 @@ def insert_type(type,id):
     return False
 
 if __name__ == '__main__':
-    handle_records()
+    #handle_records()
+    add_date_and_mark()
 
 
 

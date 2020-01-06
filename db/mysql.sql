@@ -5,6 +5,8 @@ create table if not exists `Movies` (
 	`OtherName` varchar(100) not null default '',
 	`area` varchar(100) not null default '',
 	`ReleaseTime` date not null default '1000-01-01',
+	`RecordDate` date not null default '2018-01-01',
+	'Mark' float not null default '0',
 	primary key (`id`),
 	unique key `MovieInfos`(`ChineseName`,`OtherName`,`area`,`ReleaseTime`),
 	key (`ChineseName`),

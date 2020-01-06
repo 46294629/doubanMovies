@@ -1,14 +1,14 @@
 import pymysql
 
 class MySQLdb():
-    def __init__(self, db="", host="127.0.0.1",port=3306,user="root",passwd=""):
+    def __init__(self, db="", host="127.0.0.1",port=3306,user="root",passwd="12344321"):
         self._db = pymysql.connect(database=db,host=host,port=port,user=user,password=passwd,charset="utf8")
 
     def query(self,sql):
         cursor = self.get_dictcursor()
         cursor.execute(sql)
         res = cursor.fetchall()
-        self._db.commit()
+        #self._db.commit()
         cursor.close()
         return res
 
