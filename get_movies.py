@@ -15,8 +15,8 @@ sys.setdefaultencoding('utf-8')
 #xpath learning: https://www.runoob.com/xpath/xpath-nodes.html; https://www.cnblogs.com/lei0213/p/7506130.html\
 
 file_path = 'movies.txt'
-username = '13729839399'
-password = '12344321'
+username = 'xxxxxx'
+password = 'xxxxxx'
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36'
 
 def login_get_cookies():
