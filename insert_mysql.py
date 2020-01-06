@@ -32,24 +32,6 @@ def get_line(file):
         for data in r.readlines():
             yield data
 
-def add_date_and_mark():
-    failed_record_map = {}
-    for data in get_line(file_path):
-        if data == "name;intro;url;date;mark\n":
-            continue
-        infos = data.rstrip('\n').split(';')
-        date = infos[-2]
-        mark = int(infos[-1])
-        ChineseName = infos[0].split('/')[0].strip()
-        OtherName = infos[0].split('/')[-1].strip()
-        if not change_mark_and_date(ChineseName,OtherName,date,mark):
-            failed_record_map[ChineseName] = OtherName
-    if failed_record_map:
-        with open("failed_records.json",'w') as w:
-            w.write(json.dumps(failed_record_map))
-
-
-
 def handle_records():
     failed_record_map = {}
     for data in get_line(file_path):

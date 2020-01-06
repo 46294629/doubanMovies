@@ -81,29 +81,13 @@ def login_get_cookies():
     utils.save_cookies(cookies)
     return session,cookies
 
-#logiin
-def login_and_get(url):
-    # proxies = get_proxies_from_site()
-    opener = urllib2.build_opener()
-    opener.addheaders.append(('User-Agent',User_Agent))
-    opener.addheaders.append(('Cookie','gr_user_id=556cc5aa-ac91-4177-99a8-87bae5b964a6; _ga=GA1.2.1565543125.1509547123; _vwo_uuid_v2=B6814730F14CEB7E631FAD63B22EA8D4|c9e0dbd021c28e2116d7e5ccd42db87e; __utmv=30149280.6377; douban-fav-remind=1; douban-profile-remind=1; __gads=ID=ef1b2e2072a5259b:T=1556518326:S=ALNI_Maj2FNxW0l2em_vauvp5ooe0iONuQ; ll="118281"; bid=yXGP0aoPz0s; viewed="30468550_1905617_1186176_20397334_1201821_25802164_19948593_10678825_24842258_4913064"; __yadk_uid=0g6hFfFn9s9DsJS7xp6HtzZobChmMmkr; __utma=30149280.1565543125.1509547123.1571296137.1572422526.62; __utmz=30149280.1572422526.62.21.utmcsr=douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/online/11665640/; push_noty_num=0; ct=y; push_doumail_num=0; _pk_ref.100001.8cb4=%5B%22%22%2C%22%22%2C1577698732%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%25E5%259C%25B0%25E7%258B%25B1%25E7%25A5%259E%25E6%258E%25A2%26cat%3D1002%22%5D; _pk_ses.100001.8cb4=*; ap_v=0,6.0; dbcl2="63778232:eM15E4pRJUs"; ck=kg3b; _pk_id.100001.8cb4=f0f5f203b0ef3ecc.1495010113.464.1577699735.1577676960.'))
-    for _ in range(3):
-        try:
-            res = opener.open(url)
-            return res.read()
-        except Exception  as e  :
-            print('something must go wrong:%s'%str(e))
-            time.sleep(3)
-    return None
-
 #find recorded movies
 def get_seen_movies():
     session, _ = login_get_cookies()
     with open (file_path,'w') as f:
         f.write("name;intro;url;date;mark\n")
         for i in range(55):
-            url = 'https://movie.douban.com/people/waitforwho/collect?start='+str(i*15)+'&sort=time&rating=all&filter=all&mode=grid'
-            #data = login_and_get(url)
+            url = 'https://movie.douban.com/people/xxxxx/collect?start='+str(i*15)+'&sort=time&rating=all&filter=all&mode=grid'
             data = session.get(url)
             if not data:
                 continue
