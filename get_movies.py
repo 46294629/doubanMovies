@@ -17,6 +17,7 @@ sys.setdefaultencoding('utf-8')
 file_path = 'movies.txt'
 username = 'xxxxxx'
 password = 'xxxxxx'
+seen_pages = xx
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36'
 
 def login_get_cookies():
@@ -86,7 +87,7 @@ def get_seen_movies():
     session, _ = login_get_cookies()
     with open (file_path,'w') as f:
         f.write("name;intro;url;date;mark\n")
-        for i in range(55):
+        for i in range(seen_pages):
             url = 'https://movie.douban.com/people/xxxxx/collect?start='+str(i*15)+'&sort=time&rating=all&filter=all&mode=grid'
             data = session.get(url)
             if not data:
