@@ -9,7 +9,7 @@ from get_movies import file_path, get_movie
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-MovieDB = {'db':"movie",'host':"127.0.0.1",'port':3306,'user':"root",'passwd':"12344321"}
+MovieDB = {'db':"movie",'host':"127.0.0.1",'port':3306,'user':"root",'passwd':"xxxxxxx"}
 
 dbs={}
 def mysql(reconnect=False, **conn):
